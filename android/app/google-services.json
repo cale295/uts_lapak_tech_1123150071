@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "270233046036",
+    "project_id": "email-verif-e02bb",
+    "storage_bucket": "email-verif-e02bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270233046036:android:57a9387f0d3d3c0e9cab01",
+        "android_client_info": {
+          "package_name": "com.example.lapak_tech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270233046036-f7vjmukr0ecfcifsts090kocs0d3ibd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVc7ouvfC8upFrG8oNbwmLEfUZ-ddo6D4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270233046036-f7vjmukr0ecfcifsts090kocs0d3ibd1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "270233046036-sebdu6298b62rrbare8fm804ps6gut3u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lapakTech"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
