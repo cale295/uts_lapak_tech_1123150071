@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
+
 import '../providers/auth_provider.dart';
 import '../../../../core/routes/app_router.dart';
 import '../widgets/auth_header.dart';
@@ -10,6 +11,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/divider_with_text.dart';
 import '../widgets/google_sign_in_button.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -30,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  /// Handler untuk login email/password
   Future<void> _loginEmail() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -44,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
     _handleLoginResult(ok, auth);
   }
 
-  /// Handler untuk login Google
   Future<void> _loginGoogle() async {
     final auth = context.read<AuthProvider>();
     final ok = await auth.loginWithGoogle();
@@ -52,7 +52,6 @@ class _LoginPageState extends State<LoginPage> {
     _handleLoginResult(ok, auth);
   }
 
-  /// Routing berdasarkan hasil login
   void _handleLoginResult(bool ok, AuthProvider auth) {
     if (ok) {
       Navigator.pushReplacementNamed(context, AppRouter.dashboard);
@@ -73,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Reset Password'),
         content: CustomTextField(
           label: 'Email',
@@ -107,72 +107,110 @@ class _LoginPageState extends State<LoginPage> {
       isLoading: isLoading,
       message: 'Masuk ke akun...',
       child: Scaffold(
+        backgroundColor: const Color(0xFFF5F7FA),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
                   const AuthHeader(
                     icon: Icons.lock_open_outlined,
-                    title: 'Selamat Datang',
-                    subtitle: 'Masuk ke akun Anda untuk melanjutkan',
+                    title: 'Lapak Tech',
+                    subtitle: 'Masuk untuk belanja gear terbaik',
                   ),
+
                   const SizedBox(height: 32),
-                  CustomTextField(
-                    label: 'Email',
-                    hint: 'contoh@email.com',
-                    controller: _emailCtrl,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    validator: (v) {
-                      if (v?.isEmpty ?? true) return 'Email wajib diisi';
-                      if (!EmailValidator.validate(v!)) {
-                        return 'Format email salah';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Password',
-                    hint: 'Masukkan password',
-                    controller: _passCtrl,
-                    obscureText: !_showPass,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showPass ? Icons.visibility_off : Icons.visibility,
-                      ),
-                      onPressed: () => setState(() => _showPass = !_showPass),
+
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    validator: (v) =>
-                        (v?.isEmpty ?? true) ? 'Password wajib diisi' : null,
-                  ),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => _showForgotPasswordDialog(context),
-                      child: const Text('Lupa Password?'),
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          label: 'Email',
+                          hint: 'contoh@email.com',
+                          controller: _emailCtrl,
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          validator: (v) {
+                            if (v?.isEmpty ?? true) return 'Email wajib diisi';
+                            if (!EmailValidator.validate(v!)) {
+                              return 'Format email salah';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        CustomTextField(
+                          label: 'Password',
+                          hint: 'Masukkan password',
+                          controller: _passCtrl,
+                          obscureText: !_showPass,
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _showPass
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () =>
+                                setState(() => _showPass = !_showPass),
+                          ),
+                          validator: (v) =>
+                              (v?.isEmpty ?? true) ? 'Password wajib diisi' : null,
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () =>
+                                _showForgotPasswordDialog(context),
+                            child: const Text('Lupa Password?'),
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        CustomButton(
+                          label: 'Masuk',
+                          onPressed: _loginEmail,
+                          isLoading: isLoading,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  CustomButton(
-                    label: 'Masuk',
-                    onPressed: _loginEmail,
-                    isLoading: isLoading,
-                  ),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 24),
+
                   const DividerWithText(text: 'atau masuk dengan'),
+
                   const SizedBox(height: 20),
+
                   GoogleSignInButton(
                     onPressed: _loginGoogle,
                     isLoading: isLoading,
                   ),
+
                   const SizedBox(height: 24),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
