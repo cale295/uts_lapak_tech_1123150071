@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/product_provider.dart';
+import '../../../../core/providers/theme_provider.dart';
 import '../../../../core/routes/app_router.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -25,14 +26,20 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final product = context.watch<ProductProvider>();
+    final themeProvider = context.watch<ThemeProvider>();
+
+    final theme = Theme.of(context);
+    final surface = theme.colorScheme.surface;
+    final onSurface = theme.colorScheme.onSurface;
+    final primary = theme.colorScheme.primary;
+    final hintColor = theme.hintColor;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-
+      backgroundColor: surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: surface,
+        foregroundColor: onSurface,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,11 +49,29 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             Text(
               'Halo, ${auth.firebaseUser?.displayName ?? 'User'} 👋',
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
+              style: TextStyle(fontSize: 13, color: hintColor),
             ),
           ],
         ),
         actions: [
+          Row(
+            children: [
+              Icon(
+                themeProvider.isDark
+                    ? Icons.dark_mode
+                    : Icons.light_mode,
+                size: 20,
+                color: themeProvider.isDark
+                    ? Colors.amber
+                    : hintColor,
+              ),
+              Switch(
+                value: themeProvider.isDark,
+                onChanged: (_) =>
+                    context.read<ThemeProvider>().toggle(),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -57,20 +82,20 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-
-      // 🔥 BODY STATE MANAGEMENT
       body: switch (product.status) {
-        ProductStatus.loading || ProductStatus.initial => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        ProductStatus.loading || ProductStatus.initial =>
+          const Center(child: CircularProgressIndicator()),
 
         ProductStatus.error => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              Icon(Icons.error_outline, size: 64, color: primary),
               const SizedBox(height: 16),
-              Text(product.error ?? 'Terjadi kesalahan'),
+              Text(
+                product.error ?? 'Terjadi kesalahan',
+                style: TextStyle(color: onSurface),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => product.fetchProducts(),
@@ -85,7 +110,8 @@ class _DashboardPageState extends State<DashboardPage> {
           child: GridView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: product.products.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 14,
               crossAxisSpacing: 14,
@@ -97,7 +123,7 @@ class _DashboardPageState extends State<DashboardPage> {
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: Colors.white,
+                  color: surface,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -107,12 +133,14 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
+                          borderRadius:
+                              const BorderRadius.vertical(
                             top: Radius.circular(16),
                           ),
                           child: Image.network(
@@ -120,25 +148,31 @@ class _DashboardPageState extends State<DashboardPage> {
                             height: 120,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, __, ___) =>
+                                Container(
                               height: 120,
-                              color: Colors.grey.shade200,
-                              child: const Icon(Icons.image_not_supported),
+                              color: surface,
+                              child: Icon(
+                                Icons.image_not_supported,
+                                color: hintColor,
+                              ),
                             ),
                           ),
                         ),
-
                         Positioned(
                           top: 8,
                           right: 8,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding:
+                                const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.black
+                                  .withOpacity(0.7),
+                              borderRadius:
+                                  BorderRadius.circular(20),
                             ),
                             child: Text(
                               'Stock ${p.stock}',
@@ -151,50 +185,53 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ],
                     ),
-
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding:
+                          const EdgeInsets.all(12),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Text(
                             p.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
+                            style: TextStyle(
+                              fontWeight:
+                                  FontWeight.w600,
                               fontSize: 14,
+                              color: onSurface,
                             ),
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            overflow:
+                                TextOverflow.ellipsis,
                           ),
-
                           const SizedBox(height: 6),
-
                           Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding:
+                                const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1565C0).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
+                              color: primary.withOpacity(0.1),
+                              borderRadius:
+                                  BorderRadius.circular(20),
                             ),
                             child: Text(
                               p.category,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 10,
-                                color: Color(0xFF1565C0),
+                                color: primary,
                               ),
                             ),
                           ),
-
                           const SizedBox(height: 8),
-
                           Text(
                             'Rp ${p.price.toStringAsFixed(0)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1565C0),
+                              fontWeight:
+                                  FontWeight.bold,
+                              color: primary,
                             ),
                           ),
                         ],
