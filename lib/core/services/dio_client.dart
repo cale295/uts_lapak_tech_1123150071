@@ -29,10 +29,18 @@ class DioClient {
         handler.next(response);
       },
       onError: (error, handler) async {
-        debugPrint('[ERROR] ${error.response?.statusCode}');
+        debugPrint('====================');
+        debugPrint('ERROR TYPE: ${error.type}');
+        debugPrint('ERROR MSG : ${error.message}');
+        debugPrint('STATUS    : ${error.response?.statusCode}');
+        debugPrint('DATA      : ${error.response?.data}');
+        debugPrint('URL       : ${error.requestOptions.uri}');
+        debugPrint('====================');
+
         if (error.response?.statusCode == 401) {
-          await SecureStorageService.clearAll(); // Auto logout
+          await SecureStorageService.clearAll();
         }
+
         handler.next(error);
       },
     ));
@@ -41,9 +49,14 @@ class DioClient {
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await SecureStorageService.getToken();
+
+        debugPrint('TOKEN: $token');
+        debugPrint('URL  : ${options.uri}');
+
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+
         handler.next(options);
       },
     ));

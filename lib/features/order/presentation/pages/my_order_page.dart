@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/order_provider.dart';
+import '../../data/model/order_model.dart';
+
 class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
 

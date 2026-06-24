@@ -34,4 +34,11 @@ class OrderRepositoryImpl implements OrderRepository {
     final List<dynamic> data = response.data['data'] ?? [];
     return data.map((e) => OrderModel.fromJson(e)).toList();
   }
+
+  @override
+  Future<OrderModel> getOrderDetail(int orderId) async {
+    final response = await DioClient.instance.get('${ApiConstants.orders}/$orderId');
+    final data = response.data['data'] as Map<String, dynamic>;
+    return OrderModel.fromJson(data);
+  }
 }

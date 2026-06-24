@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pasar_malam/core/routes/app_router.dart';
-import 'package:pasar_malam/features/cart/data/models/cart_model.dart';
-import 'package:pasar_malam/features/cart/presentation/providers/cart_provider.dart';
+import 'package:lapak_tech/core/routes/app_router.dart';
+import 'package:lapak_tech/features/cart/data/model/cart_model.dart';
+import 'package:lapak_tech/features/cart/presentation/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {

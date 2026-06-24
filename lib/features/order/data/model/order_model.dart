@@ -69,6 +69,8 @@ class OrderModel {
   final String paymentMethod;
   final List<OrderItemModel> items;
   final String createdAt;
+  final String? vaNumber;
+  final String? gopayDeeplink;
 
   OrderModel({
     required this.id,
@@ -79,6 +81,8 @@ class OrderModel {
     required this.paymentMethod,
     required this.items,
     required this.createdAt,
+    this.vaNumber,
+    this.gopayDeeplink,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -122,6 +126,10 @@ class OrderModel {
 
       createdAt:
           json['created_at'] as String? ?? '',
+
+      vaNumber: json['va_number'] as String?,
+
+      gopayDeeplink: json['gopay_deeplink'] as String?,
     );
   }
 
@@ -135,6 +143,8 @@ class OrderModel {
       'payment_method': paymentMethod,
       'items': items.map((e) => e.toJson()).toList(),
       'created_at': createdAt,
+      'va_number': vaNumber,
+      'gopay_deeplink': gopayDeeplink,
     };
   }
 }

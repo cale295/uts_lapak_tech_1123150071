@@ -5,6 +5,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/product_provider.dart';
 import '../../../../core/providers/theme_provider.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -19,6 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductProvider>().fetchProducts();
+      context.read<CartProvider>().fetchCart();
     });
   }
 
@@ -73,6 +75,19 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
           IconButton(
+            icon: Badge(
+              label: Text(
+                '${context.watch<CartProvider>().itemCount}',
+                style: const TextStyle(color: Colors.white, fontSize: 10),
+              ),
+              isLabelVisible: context.watch<CartProvider>().itemCount > 0,
+              child: const Icon(Icons.shopping_cart),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouter.cart);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.logout();
@@ -115,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisCount: 2,
               mainAxisSpacing: 14,
               crossAxisSpacing: 14,
-              childAspectRatio: 0.72,
+              childAspectRatio: 0.68,
             ),
             itemBuilder: (context, i) {
               final p = product.products[i];
@@ -225,14 +240,36 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Rp ${p.price.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight:
-                                  FontWeight.bold,
-                              color: primary,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Rp ${p.price.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight:
+                                      FontWeight.bold,
+                                  color: primary,
+                                ),
+                              ),
+                              IconButton(
+                                constraints: const BoxConstraints(),
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(Icons.add_shopping_cart, size: 20),
+                                color: primary,
+                                onPressed: () async {
+                                  final success = await context.read<CartProvider>().addToCart(p.id, 1);
+                                  if (success && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${p.name} ditambahkan ke keranjang'),
+                                        duration: const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

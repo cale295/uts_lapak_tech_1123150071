@@ -3,6 +3,7 @@ import 'package:lapak_tech/core/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:lapak_tech/services/fcm_service.dart';
 import './features/auth/presentation/providers/auth_provider.dart';
 import './features/dasboard/presentation/providers/product_provider.dart';
 import './features/cart/presentation/providers/cart_provider.dart';
@@ -16,6 +17,9 @@ void main() async {
 
   // Inisialisasi Firebase SEBELUM runApp
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Inisialisasi Firebase Cloud Messaging
+  await FCMService.initialize();
 
   runApp(
     MultiProvider(
